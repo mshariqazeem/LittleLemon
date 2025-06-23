@@ -2,7 +2,7 @@
 import json
 from datetime import datetime
 from .forms import BookingForm
-from .models import Menu, Booking
+from .models import MenuItem, Booking
 from django.core import serializers
 from django.shortcuts import render
 from django.http import HttpResponse
@@ -10,7 +10,8 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import generics, viewsets
 from django.views.decorators.csrf import csrf_exempt
-from .serializers import MenuSerializer, BookingSerializer
+from rest_framework.permissions import IsAuthenticated
+from .serializers import MenuItemSerializer, BookingSerializer
 
 # Create your views here.
 class bookingview(APIView):
@@ -20,14 +21,15 @@ class bookingview(APIView):
         return Response(serializer.data)
 
 class MenuItemsView(generics.ListCreateAPIView):
-    queryset = Menu.objects.all()
-    serializer_class = MenuSerializer
+    queryset = MenuItem.objects.all()
+    serializer_class = MenuItemSerializer
 
 class SingleMenuItemView(generics.RetrieveUpdateAPIView, generics.DestroyAPIView):
-    queryset = Menu.objects.all()
-    serializer_class = MenuSerializer
+    queryset = MenuItem.objects.all()
+    serializer_class = MenuItemSerializer
 
 class BookingViewSet(viewsets.ModelViewSet):
+    permission_classes = [IsAuthenticated]
     queryset = Booking.objects.all()
     serializer_class = BookingSerializer
 
